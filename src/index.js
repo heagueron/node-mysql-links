@@ -2,15 +2,18 @@ const express = require('express');
 const morgan = require('morgan');
 const exphbs = require('express-handlebars');
 const path = require('path');
-/*
+
 const flash = require('connect-flash');
 const session = require('express-session');
-//const MySQLStore = require('express-mysql-session');
+const MySQLStore = require('express-mysql-session');
 const { database } = require('./keys');
-*/
+
+const passport = require('passport');
+
 
 // Initializations
 const app = express();
+require('./lib/passport');
 
 // Settings
 app.set('port', process.env.PORT || 4000);
@@ -27,20 +30,24 @@ app.engine('.hbs', exphbs({
 app.set('view engine', '.hbs');  // Activate engine .hbs
 
 // Middleware
-/*
+
 app.use(session({
     secret: 'heagueronNodeLinks',
     resave: false,
     saveUninitialized: false,
     store: new MySQLStore(database)
-})); 
-app.use(flash); // Messages
-*/
+}));
+
+// TODO: Replace flash. This version of flash breaks the app.
+// app.use(flash); // Messages
+
 
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended: false})); // Only receive text for now
 app.use(express.json()); // for future api calls
 
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Global variables
 
@@ -52,7 +59,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use(require('./routes'));  // node search index.js
-app.use(require('./routes/aunthentication'));  
+app.use(require('./routes/authentication'));  
 app.use('/links', require('./routes/links'));  // Prefixed by '/links'
 
 // Public (static: js, images, css)

@@ -19,6 +19,7 @@ router.post('/add',  async (req, res) => {
         url,
         description
     };
+
     // Save to DB:
     await pool.query( 'INSERT INTO links set ?', [newLink] );
     
