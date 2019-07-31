@@ -5,7 +5,7 @@ const passport = require('passport');
 
 // SIGNUP
 router.get('/signup', (req, res) => {
-    res.render('auth/signup');
+    res.render('auth/signup'); // The form
 });
 
 /*
@@ -23,11 +23,29 @@ router.post(
         'local.signup',
         {
             successRedirect: '/profile',
-            failureRedirect: '/signup' 
+            failureRedirect: '/signup',
+            //failureFlash: true 
         }
 ));
 
 
+// SIGNIN
+router.get('/signin', (req, res) => {
+    res.render('auth/signin'); // The form
+});
+
+router.post('/signin', (req, res, next) => {
+
+    passport.authenticate(
+        'local.signin',
+        {
+            successRedirect: '/profile',
+            failureRedirect: '/signin',
+            //failureFlash: true
+        }
+    )(req, res, next)
+
+});
 
 
 
