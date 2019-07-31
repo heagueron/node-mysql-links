@@ -37,9 +37,11 @@ app.use(session({
     saveUninitialized: false,
     store: new MySQLStore(database)
 }));
+// Es importante mencionar que se debe declarar connect flash 
+// después de declarar el paquete que estemos usando para 
+// manejar sesiones.
 
-// TODO: Replace flash. This version of flash breaks the app.
-// app.use(flash); // Messages
+app.use(flash()); // Messages
 
 
 app.use(morgan('dev'));
@@ -49,11 +51,13 @@ app.use(express.json()); // for future api calls
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Global variables
 
+// Global variables
 app.use((req, res, next) => {
-    //app.locals.success = req.flash('success');
-    //app.locals.message = req.flash('message');
+    // All these global values are taken from the session store
+    app.locals.success = req.flash('success');
+    app.locals.message = req.flash('message');
+    app.locals.user = req.user; 
     next();
 });
 

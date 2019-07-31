@@ -3,8 +3,10 @@ const router = express.Router();
 
 const passport = require('passport');
 
+const { isLoggedIn, isNotLoggedIn } = require('../lib/auth');
+
 // SIGNUP
-router.get('/signup', (req, res) => {
+router.get('/signup', isNotLoggedIn, (req, res) => {
     res.render('auth/signup'); // The form
 });
 
@@ -19,6 +21,7 @@ router.post('/signup', (req, res) => {
 
 router.post(
     '/signup', 
+    isNotLoggedIn,
     passport.authenticate(
         'local.signup',
         {
@@ -30,11 +33,11 @@ router.post(
 
 
 // SIGNIN
-router.get('/signin', (req, res) => {
+router.get('/signin', isNotLoggedIn, (req, res) => {
     res.render('auth/signin'); // The form
 });
 
-router.post('/signin', (req, res, next) => {
+router.post('/signin', isNotLoggedIn, (req, res, next) => {
 
     passport.authenticate(
         'local.signin',
@@ -43,14 +46,17 @@ router.post('/signin', (req, res, next) => {
             failureRedirect: '/signin',
             //failureFlash: true
         }
-    )(req, res, next)
+    )(req, res, next);
 
 });
 
+router.get('/profile', isLoggedIn, (req, res) => {
+    res.render('profile');
+});
 
-
-router.get('/profile', (req, res) => {
-    res.send('HERE GOES YOUR PROFILE');
+router.get('/logout', isLoggedIn, (req, res) => {
+    req.logOut();
+    res.redirect('/');
 });
 
 
